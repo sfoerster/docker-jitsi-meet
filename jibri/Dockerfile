@@ -1,8 +1,9 @@
-ARG JITSI_REPO=jitsi
-FROM ${JITSI_REPO}/base-java
+ARG JITSI_REPO=cyber5k
+FROM ${JITSI_REPO}/jitsi-base-java
 
 #ARG CHROME_RELEASE=latest
 #ARG CHROMEDRIVER_MAJOR_RELEASE=latest
+
 ARG CHROME_RELEASE=78.0.3904.97
 ARG CHROMEDRIVER_MAJOR_RELEASE=78
 
@@ -31,13 +32,17 @@ RUN \
 	|| true
 
 RUN \
-	[ "${CHROMEDRIVER_MAJOR_RELEASE}" = "latest" ] \
-	&& CHROMEDRIVER_RELEASE="$(curl -4Ls https://chromedriver.storage.googleapis.com/LATEST_RELEASE)" \
-	|| CHROMEDRIVER_RELEASE="$(curl -4Ls https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROMEDRIVER_MAJOR_RELEASE})" \
-	&& curl -4Ls "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_RELEASE}/chromedriver_linux64.zip" \
-	| zcat >> /usr/bin/chromedriver \
-	&& chmod +x /usr/bin/chromedriver \
-	&& chromedriver --version
+    apt-dpkg-wrap apt-get update \
+    && apt-dpkg-wrap apt-get install -y chromium-driver \
+    && apt-cleanup
+	
+    #[ "${CHROMEDRIVER_MAJOR_RELEASE}" = "latest" ] \
+	#&& CHROMEDRIVER_RELEASE="$(curl -4Ls https://chromedriver.storage.googleapis.com/LATEST_RELEASE)" \
+	#|| CHROMEDRIVER_RELEASE="$(curl -4Ls https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROMEDRIVER_MAJOR_RELEASE})" \
+	#&& curl -4Ls "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_RELEASE}/chromedriver_linux64.zip" \
+	#| zcat >> /usr/bin/chromedriver \
+	#&& chmod +x /usr/bin/chromedriver \
+	#&& chromedriver --version
 
 RUN \
         apt-dpkg-wrap apt-get update \

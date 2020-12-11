@@ -1,5 +1,5 @@
-ARG JITSI_REPO=jitsi
-FROM ${JITSI_REPO}/base-java
+ARG JITSI_REPO=cyber5k
+FROM ${JITSI_REPO}/jitsi-base-java
 
 RUN \
 	apt-dpkg-wrap apt-get update && \

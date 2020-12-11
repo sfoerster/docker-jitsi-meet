@@ -1,6 +1,6 @@
-ARG JITSI_REPO=jitsi
+ARG JITSI_REPO=cyber5k
 
-FROM ${JITSI_REPO}/base as builder
+FROM ${JITSI_REPO}/jitsi-base as builder
 
 RUN \
     apt-dpkg-wrap apt-get update \
@@ -11,12 +11,17 @@ RUN \
       libssl-dev \
       luarocks \
       git \
-      gcc \
-    && luarocks install cyrussasl 1.1.0-1 \
-    && luarocks install net-url 0.9-1 \
-    && luarocks install luajwtjitsi 2.0-0
+      gcc
 
-FROM ${JITSI_REPO}/base
+RUN luarocks install cyrussasl 1.1.0-1
+RUN luarocks install net-url 0.9-1
+#RUN luarocks install luajwtjitsi 2.0-0
+
+RUN /bin/bash -c "[[ \"$(arch)\" = \"x86_64\" ]] && luarocks install luajwtjitsi 2.0-1 || true"
+RUN /bin/bash -c "[[ \"$(arch)\" = \"armv7l\" ]] && luarocks install luajwtjitsi 2.0-1 CRYPTO_LIBDIR=/usr/lib/arm-linux-gnueabihf || true"
+RUN /bin/bash -c "[[ \"$(arch)\" = \"aarch64\" ]] && luarocks install luajwtjitsi 2.0-1 OPENSSL_LIBDIR=/usr/lib/aarch64-linux-gnu || true"
+
+FROM ${JITSI_REPO}/jitsi-base
 
 ENV XMPP_CROSS_DOMAIN="false"
 
